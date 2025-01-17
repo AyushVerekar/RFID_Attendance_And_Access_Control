@@ -12,12 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RFID_Android_Application"
         tools:targetApi="31">
-        <activity
-            android:name=".Timetable"
-            android:exported="false" />
-        <activity
-            android:name=".classWork_notes"
-            android:exported="false" />
+
         <activity
             android:name=".MainLoginPage"
             android:exported="true">
@@ -27,6 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".LoginTeacherPage"
             android:exported="true">
@@ -44,11 +40,7 @@
             android:exported="true">
           
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
 
-        </activity>
     </application>
 
 </manifest>
