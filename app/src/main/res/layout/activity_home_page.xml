@@ -5,40 +5,49 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Home_Page">
+    tools:context=".Home_Page"
+    android:background="@drawable/mainbackground"
+    >
 
 
     <ImageButton
         android:id="@+id/HomeProfileImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="128dp"
         android:layout_marginTop="80dp"
+        android:contentDescription="Profile"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars"
-        android:contentDescription="Profile"/>
+        tools:srcCompat="@tools:sample/avatars" />
 
     <Button
         android:id="@+id/HomeAttendanceButton"
-        android:layout_width="130dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="300dp"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="310dp"
+        android:background="@drawable/mainbuttonborder"
+        android:padding="12dp"
         android:text="Attendance"
+        android:textColor="@color/mainTextBlue"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/HomeTimeTableButton"
-        android:layout_width="130dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="230dp"
-        android:layout_marginTop="300dp"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="410dp"
+        android:background="@drawable/mainbuttonborder"
+        android:padding="12dp"
         android:text="Time-Table"
+        android:textSize="25sp"
+        android:textColor="@color/mainTextBlue"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

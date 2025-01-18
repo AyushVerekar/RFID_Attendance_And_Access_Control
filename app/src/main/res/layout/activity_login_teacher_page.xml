@@ -5,16 +5,21 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginTeacherPage">
+    tools:context=".LoginTeacherPage"
+    android:background="@drawable/mainbackground"
+    >
+
     <EditText
         android:id="@+id/LoginTeacherNameText"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_marginStart="100dp"
         android:layout_marginTop="230dp"
+        android:backgroundTint="@color/mainTextBlue"
         android:ems="10"
         android:hint="Name"
         android:inputType="text"
+        android:textColorHint="@color/mainTextBlue"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,23 +27,13 @@
         android:id="@+id/LoginTeacherIDText"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="290dp"
+        android:layout_marginTop="300dp"
+        android:backgroundTint="@color/mainTextBlue"
         android:ems="10"
         android:hint="ID"
         android:inputType="text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/LoginTeacherDepartmentText"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="350dp"
-        android:ems="10"
-        android:hint="Department"
-        android:inputType="text"
+        android:textColorHint="@color/mainTextBlue"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -46,9 +41,11 @@
         android:id="@+id/LoginTeacherLoginSubmitButton"
         android:layout_width="144dp"
         android:layout_height="49dp"
-        android:layout_marginStart="132dp"
-        android:layout_marginTop="430dp"
+        android:layout_marginTop="400dp"
+        android:background="@drawable/mainbuttonborder"
         android:text="Login"
+        android:textColor="@color/mainTextBlue"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
