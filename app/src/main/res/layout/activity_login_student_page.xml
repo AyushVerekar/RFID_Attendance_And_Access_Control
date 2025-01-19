@@ -19,6 +19,7 @@
         android:inputType="text"
         android:backgroundTint="@color/mainTextBlue"
         android:textColorHint="@color/mainTextBlue"
+        android:textColor="@color/mainTextBlue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -33,6 +34,7 @@
         android:inputType="text"
         android:textColorHint="@color/mainTextBlue"
         android:backgroundTint="@color/mainTextBlue"
+        android:textColor="@color/mainTextBlue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
