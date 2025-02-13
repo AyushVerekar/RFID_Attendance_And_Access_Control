@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class Home_Page extends AppCompatActivity {
 
-    Button logoutButton;
+    Button logoutButton,csStudentsTimetable;
     SharedPreferences studentPrefs, teacherPrefs;
 
     @Override
@@ -20,9 +20,19 @@ public class Home_Page extends AppCompatActivity {
         setContentView(R.layout.activity_home_page);
 
         logoutButton = findViewById(R.id.logoutButton);
+        csStudentsTimetable = findViewById(R.id.HomeTimeTableButton);
+
 
         studentPrefs = getSharedPreferences("StudentPrefs", Context.MODE_PRIVATE);
         teacherPrefs = getSharedPreferences("TeacherPrefs", Context.MODE_PRIVATE);
+
+        csStudentsTimetable.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Home_Page.this, StudentTimetable.class);
+                startActivity(intent);
+            }
+        });
 
         logoutButton.setOnClickListener(v -> logoutUser());
     }

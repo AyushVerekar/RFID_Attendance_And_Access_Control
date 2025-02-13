@@ -23,13 +23,13 @@ public class LoginStudentPage extends AppCompatActivity {
     EditText studentName, studentCuin;
     SharedPreferences sharedPreferences;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         sharedPreferences = getSharedPreferences("StudentPrefs", Context.MODE_PRIVATE);
 
-        // Check if user is already logged in
         if (sharedPreferences.contains("student_name") && sharedPreferences.contains("student_CUIN")) {
             navigateToHome();
             return;
@@ -56,7 +56,7 @@ public class LoginStudentPage extends AppCompatActivity {
     private void login(String student_name, String CUIN) {
         new Thread(() -> {
             try {
-                URL url = new URL("http://192.168.159.245/sheared/studentlogin.php");
+                URL url = new URL("http://192.168.159.245/rfid/student.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setDoOutput(true);
