@@ -19,14 +19,14 @@
             android:name=".GeologyTeachersTimetable"
             android:exported="true" />
         <activity
-            android:name=".CsTeachersTimetable"
+            android:name=".TeachersTimetable"
             android:exported="true" />
         <activity
             android:name=".GeologyStudentTimetable"
             android:exported="true"/>
 
         <activity
-            android:name=".CsStudentTimetable"
+            android:name=".StudentTimetable"
             android:exported="true" />
         <activity
             android:name=".MainLoginPage"

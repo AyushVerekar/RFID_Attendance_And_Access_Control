@@ -21,7 +21,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class GeologyTeachersTimetable extends AppCompatActivity {
+public class TeachersTimetable extends AppCompatActivity {
 
     private TableLayout tableLayout;
 
@@ -29,9 +29,9 @@ public class GeologyTeachersTimetable extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_geology_teachers_timetable);
+        setContentView(R.layout.activityteachers_timetable);
 
-        tableLayout = findViewById(R.id.GeologyTeachersTimetable);
+        tableLayout = findViewById(R.id.TeachersTimetable);
 
         fetchTimetable();
     }
@@ -50,14 +50,14 @@ public class GeologyTeachersTimetable extends AppCompatActivity {
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject row = response.getJSONObject(i);
 
-                                TableRow tableRow = new TableRow(GeologyTeachersTimetable.this);
+                                TableRow tableRow = new TableRow(TeachersTimetable.this);
 
-                                TextView dayView = new TextView(GeologyTeachersTimetable.this);
+                                TextView dayView = new TextView(TeachersTimetable.this);
                                 dayView.setText(row.getString("day"));
                                 dayView.setPadding(12, 12, 12, 12);
-                                dayView.setTextSize(20);
                                 tableRow.addView(dayView);
                                 dayView.setTextColor(Color.WHITE);
+                                dayView.setTextSize(20);
                                 dayView.setBackgroundResource(R.drawable.timetablebackground);
 
 
@@ -68,7 +68,7 @@ public class GeologyTeachersTimetable extends AppCompatActivity {
                                 };
 
                                 for (String timeSlot : timeSlots) {
-                                    TextView subjectView = new TextView(GeologyTeachersTimetable.this);
+                                    TextView subjectView = new TextView(TeachersTimetable.this);
                                     String subject = row.optString(timeSlot, "No Subject");
                                     subjectView.setText(subject);
                                     subjectView.setPadding(12, 12, 12, 12);
@@ -84,14 +84,14 @@ public class GeologyTeachersTimetable extends AppCompatActivity {
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Toast.makeText(GeologyTeachersTimetable.this, "Error parsing data.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(TeachersTimetable.this, "Error parsing data.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(GeologyTeachersTimetable.this, "Error fetching data.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TeachersTimetable.this, "Error fetching data.", Toast.LENGTH_SHORT).show();
                         Log.e("Volley", error.toString());
                     }
                 });

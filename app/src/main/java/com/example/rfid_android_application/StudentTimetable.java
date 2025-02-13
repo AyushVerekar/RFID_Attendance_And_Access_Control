@@ -1,5 +1,6 @@
 package com.example.rfid_android_application;
 
+
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,7 +22,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class CsTeachersTimetable extends AppCompatActivity {
+public class StudentTimetable extends AppCompatActivity {
 
     private TableLayout tableLayout;
 
@@ -29,9 +30,9 @@ public class CsTeachersTimetable extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cs_teachers_timetable);
+        setContentView(R.layout.activitystudents_timetable);
 
-        tableLayout = findViewById(R.id.CsTeachersTimetable);
+        tableLayout = findViewById(R.id.StudentTimetable);
 
         fetchTimetable();
     }
@@ -50,14 +51,14 @@ public class CsTeachersTimetable extends AppCompatActivity {
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject row = response.getJSONObject(i);
 
-                                TableRow tableRow = new TableRow(CsTeachersTimetable.this);
+                                TableRow tableRow = new TableRow(StudentTimetable.this);
 
-                                TextView dayView = new TextView(CsTeachersTimetable.this);
+                                TextView dayView = new TextView(StudentTimetable.this);
                                 dayView.setText(row.getString("day"));
                                 dayView.setPadding(12, 12, 12, 12);
+                                dayView.setTextSize(20);
                                 tableRow.addView(dayView);
                                 dayView.setTextColor(Color.WHITE);
-                                dayView.setTextSize(20);
                                 dayView.setBackgroundResource(R.drawable.timetablebackground);
 
 
@@ -68,7 +69,7 @@ public class CsTeachersTimetable extends AppCompatActivity {
                                 };
 
                                 for (String timeSlot : timeSlots) {
-                                    TextView subjectView = new TextView(CsTeachersTimetable.this);
+                                    TextView subjectView = new TextView(StudentTimetable.this);
                                     String subject = row.optString(timeSlot, "No Subject");
                                     subjectView.setText(subject);
                                     subjectView.setPadding(12, 12, 12, 12);
@@ -84,14 +85,14 @@ public class CsTeachersTimetable extends AppCompatActivity {
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Toast.makeText(CsTeachersTimetable.this, "Error parsing data.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(StudentTimetable.this, "Error parsing data.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(CsTeachersTimetable.this, "Error fetching data.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(StudentTimetable.this, "Error fetching data.", Toast.LENGTH_SHORT).show();
                         Log.e("Volley", error.toString());
                     }
                 });
