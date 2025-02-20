@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class Home_Page extends AppCompatActivity {
 
-    Button logoutButton,csStudentsTimetable;
+    Button logoutButton, csStudentsTimetable, studentsAttendance;
     SharedPreferences studentPrefs, teacherPrefs;
 
     @Override
@@ -21,7 +21,7 @@ public class Home_Page extends AppCompatActivity {
 
         logoutButton = findViewById(R.id.logoutButton);
         csStudentsTimetable = findViewById(R.id.HomeTimeTableButton);
-
+        studentsAttendance = findViewById(R.id.HomeAttendanceButton);
 
         studentPrefs = getSharedPreferences("StudentPrefs", Context.MODE_PRIVATE);
         teacherPrefs = getSharedPreferences("TeacherPrefs", Context.MODE_PRIVATE);
@@ -34,11 +34,30 @@ public class Home_Page extends AppCompatActivity {
             }
         });
 
+        studentsAttendance.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (teacherPrefs.contains("teacher_name") && teacherPrefs.contains("teacher_id")) {
+                    // If a teacher is logged in, open TeacherAttendance layout
+                    Intent intent = new Intent(Home_Page.this, TeacherAttendance.class);
+                    startActivity(intent);
+                } else if (studentPrefs.contains("student_name") && studentPrefs.contains("student_CUIN")) {
+                    // If a student is logged in, open StudentAttendance layout
+                    Intent intent = new Intent(Home_Page.this, StudentAttendence.class);
+                    startActivity(intent);
+                } else {
+                    // If no one is logged in, redirect to the login page
+                    Intent intent = new Intent(Home_Page.this, MainLoginPage.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        });
+
         logoutButton.setOnClickListener(v -> logoutUser());
     }
 
     private void logoutUser() {
-
         SharedPreferences.Editor studentEditor = studentPrefs.edit();
         studentEditor.clear();
         studentEditor.apply();
