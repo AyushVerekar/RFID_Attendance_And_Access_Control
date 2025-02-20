@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -17,6 +17,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".TeacherAttendance"
+            android:exported="false" />
+        <activity
             android:name=".TeachersTimetable"
             android:exported="true" />
         <activity
@@ -24,13 +27,13 @@
             android:exported="true" />
         <activity
             android:name=".MainLoginPage"
-            android:exported="true" >
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".LoginTeacherPage"
             android:exported="true" />
@@ -39,6 +42,9 @@
             android:exported="true" />
         <activity
             android:name=".Home_Page"
+            android:exported="true" />
+        <activity
+            android:name=".StudentAttendence"
             android:exported="true" />
     </application>
 
