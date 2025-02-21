@@ -23,7 +23,7 @@
             android:name=".TeachersTimetable"
             android:exported="true" />
         <activity
-            android:name=".StudentTimetable"
+            android:name=".Students_Timetable"
             android:exported="true" />
         <activity
             android:name=".MainLoginPage"

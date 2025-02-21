@@ -37,7 +37,7 @@ public class TeachersTimetable extends AppCompatActivity {
     }
 
     private void fetchTimetable() {
-        String url = "http://192.168.63.245/timetable2/timetable.php";
+        String url = "http://192.168.159.245/timetable2/teacherTimetable.php";
 
         RequestQueue queue = Volley.newRequestQueue(this);
 

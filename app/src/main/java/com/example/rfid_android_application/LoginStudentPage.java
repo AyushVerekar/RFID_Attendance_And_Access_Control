@@ -56,7 +56,7 @@ public class LoginStudentPage extends AppCompatActivity {
     private void login(String student_name, String CUIN) {
         new Thread(() -> {
             try {
-                URL url = new URL("http://192.168.159.190/rfid/student.php");
+                URL url = new URL("http://192.168.159.245/rfid/student.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setDoOutput(true);

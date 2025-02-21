@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -25,8 +24,8 @@ public class TeacherAttendance extends AppCompatActivity {
     ListView attendanceListView;
     SharedPreferences sharedPreferences;
     String teacherId;
-    List<String> studentAttendanceList;
-    ArrayAdapter<String> adapter;
+    List<AttendanceItem> studentAttendanceList;
+    AttendanceAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +34,7 @@ public class TeacherAttendance extends AppCompatActivity {
 
         attendanceListView = findViewById(R.id.attendanceListView);
         studentAttendanceList = new ArrayList<>();
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, studentAttendanceList);
+        adapter = new AttendanceAdapter(this, studentAttendanceList);
         attendanceListView.setAdapter(adapter);
 
         sharedPreferences = getSharedPreferences("TeacherPrefs", Context.MODE_PRIVATE);
@@ -52,7 +51,7 @@ public class TeacherAttendance extends AppCompatActivity {
     private void fetchAttendance() {
         new Thread(() -> {
             try {
-                String urlString = "http://192.168.159.190/rfid/fetch_teacher_attendance.php?Tr_id=" + teacherId;
+                String urlString = "http://192.168.159.245/rfid/teacherAttendance.php?Tr_id=" + teacherId;
                 Log.d(TAG, "Requesting URL: " + urlString); // Debugging log
 
                 URL url = new URL(urlString);
@@ -89,10 +88,9 @@ public class TeacherAttendance extends AppCompatActivity {
                         float attendancePercentage = (totalLectures > 0) ? ((attendedLectures * 100f) / totalLectures) : 0;
 
                         String displayText = name + " - " + subjectCode + "\n" +
-                                "Attended: " + attendedLectures + "/" + totalLectures + "\n" +
-                                "Attendance: " + Math.round(attendancePercentage) + "%";
+                                "Attended: " + attendedLectures + "/" + totalLectures;
 
-                        studentAttendanceList.add(displayText);
+                        studentAttendanceList.add(new AttendanceItem(displayText, Math.round(attendancePercentage)));
                     }
 
                     runOnUiThread(() -> adapter.notifyDataSetChanged());
