@@ -22,7 +22,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class StudentTimetable extends AppCompatActivity {
+public class Students_Timetable extends AppCompatActivity {
 
     private TableLayout tableLayout;
 
@@ -30,7 +30,7 @@ public class StudentTimetable extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activitystudents_timetable);
+        setContentView(R.layout.activity_students_timetable);
 
         tableLayout = findViewById(R.id.StudentTimetable);
 
@@ -38,7 +38,7 @@ public class StudentTimetable extends AppCompatActivity {
     }
 
     private void fetchTimetable() {
-        String url = "http://192.168.63.245/timetable2/timetable.php";
+        String url = "http://192.168.159.245/rfid/studentTimetable.php";
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -51,15 +51,15 @@ public class StudentTimetable extends AppCompatActivity {
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject row = response.getJSONObject(i);
 
-                                TableRow tableRow = new TableRow(StudentTimetable.this);
+                                TableRow tableRow = new TableRow(Students_Timetable.this);
 
-                                TextView dayView = new TextView(StudentTimetable.this);
+                                TextView dayView = new TextView(Students_Timetable.this);
                                 dayView.setText(row.getString("day"));
                                 dayView.setPadding(12, 12, 12, 12);
                                 dayView.setTextSize(20);
                                 tableRow.addView(dayView);
-                                dayView.setTextColor(Color.WHITE);
-                                dayView.setBackgroundResource(R.drawable.timetablebackground);
+                                dayView.setTextColor(Color.BLACK);
+
 
 
                                 String[] timeSlots = {
@@ -69,14 +69,14 @@ public class StudentTimetable extends AppCompatActivity {
                                 };
 
                                 for (String timeSlot : timeSlots) {
-                                    TextView subjectView = new TextView(StudentTimetable.this);
+                                    TextView subjectView = new TextView(Students_Timetable.this);
                                     String subject = row.optString(timeSlot, "No Subject");
                                     subjectView.setText(subject);
                                     subjectView.setPadding(12, 12, 12, 12);
                                     subjectView.setTextSize(20);
-                                    subjectView.setBackgroundResource(R.drawable.timetablebackground);
+
                                     subjectView
-                                            .setTextColor(Color.WHITE);
+                                            .setTextColor(Color.BLACK);
                                     tableRow.addView(subjectView);
                                 }
 
@@ -85,14 +85,14 @@ public class StudentTimetable extends AppCompatActivity {
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Toast.makeText(StudentTimetable.this, "Error parsing data.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Students_Timetable.this, "Error parsing data.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(StudentTimetable.this, "Error fetching data.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Students_Timetable.this, "Error fetching data.", Toast.LENGTH_SHORT).show();
                         Log.e("Volley", error.toString());
                     }
                 });
