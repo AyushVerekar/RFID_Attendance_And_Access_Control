@@ -1,6 +1,9 @@
 package com.example.rfid_android_application;
 
+import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -33,8 +36,10 @@ public class ActivityClasswork extends AppCompatActivity {
     private LinearLayout fileListLayout;
     private ProgressBar progressBar;
     private SharedPreferences teacherPrefs;
-    private static final String UPLOAD_URL = "http://192.168.159.245/rfid/upload.php";
-    private static final String FETCH_URL = "http://192.168.159.245/rfid/fetch_files.php";
+    private static final String BASE_URL = "http://192.168.159.245/rfid/";
+    private static final String UPLOAD_URL = BASE_URL + "upload.php";
+    private static final String FETCH_URL = BASE_URL + "fetch_files.php";
+    private static final String DELETE_URL = BASE_URL + "delete_file.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,10 +111,13 @@ public class ActivityClasswork extends AppCompatActivity {
             inputStream.close();
             outputStream.close();
 
+            String teacherName = teacherPrefs.getString("teacher_name", "Unknown");
+
             OkHttpClient client = new OkHttpClient();
             RequestBody requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("file", fileName, RequestBody.create(tempFile, MediaType.parse("application/pdf")))
+                    .addFormDataPart("teacher_name", teacherName)
                     .build();
 
             Request request = new Request.Builder().url(UPLOAD_URL).post(requestBody).build();
@@ -159,15 +167,24 @@ public class ActivityClasswork extends AppCompatActivity {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject fileObject = jsonArray.getJSONObject(i);
                             String fileName = fileObject.getString("name");
-                            String fileUrl = "http://192.168.159.245/rfid/" + fileObject.getString("url");
+                            String teacherName = fileObject.getString("teacher");
 
-                            TextView fileTextView = new TextView(ActivityClasswork.this);
-                            fileTextView.setText(fileName);
-                            fileTextView.setTextSize(18);
-                            fileTextView.setPadding(10, 10, 10, 10);
-                            fileTextView.setOnClickListener(v -> downloadFile(fileName, fileUrl));
+                            View fileView = getLayoutInflater().inflate(R.layout.file_item, fileListLayout, false);
+                            TextView fileNameTextView = fileView.findViewById(R.id.fileName);
+                            Button downloadButton = fileView.findViewById(R.id.downloadButton);
+                            Button deleteButton = fileView.findViewById(R.id.deleteButton);
 
-                            fileListLayout.addView(fileTextView);
+                            fileNameTextView.setText(fileName + " (Uploaded by: " + teacherName + ")");
+                            downloadButton.setOnClickListener(v -> downloadFile(fileName));
+
+                            if (teacherPrefs.contains("teacher_name")) {
+                                deleteButton.setVisibility(View.VISIBLE);
+                                deleteButton.setOnClickListener(v -> confirmDelete(fileName));
+                            } else {
+                                deleteButton.setVisibility(View.GONE);
+                            }
+
+                            fileListLayout.addView(fileView);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -177,20 +194,63 @@ public class ActivityClasswork extends AppCompatActivity {
         });
     }
 
-    private void downloadFile(String fileName, String fileUrl) {
-        Toast.makeText(this, "Downloading " + fileName, Toast.LENGTH_SHORT).show();
+    private void confirmDelete(String fileName) {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete File")
+                .setMessage("Are you sure you want to delete this file?")
+                .setPositiveButton("Yes", (dialog, which) -> deleteFileFromServer(fileName))
+                .setNegativeButton("No", null)
+                .show();
+    }
+    private void deleteFileFromServer(String fileName) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("file_name", fileName.trim()) // Trim to remove spaces
+                .build();
 
+        Request request = new Request.Builder()
+                .url("http://192.168.159.245/rfid/delete_file.php") // Make sure this URL is correct
+                .post(requestBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> Toast.makeText(ActivityClasswork.this, "Failed to delete", Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseData = response.body().string();
+                try {
+                    JSONObject jsonResponse = new JSONObject(responseData);
+                    boolean success = jsonResponse.getBoolean("success");
+                    String message = jsonResponse.getString("message");
+
+                    runOnUiThread(() -> {
+                        Toast.makeText(ActivityClasswork.this, message, Toast.LENGTH_SHORT).show();
+                        if (success) {
+                            fetchUploadedFiles(); // Refresh file list after deletion
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+
+
+    private void downloadFile(String fileName) {
+        String fileUrl = BASE_URL + "uploads/" + fileName;
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(fileUrl));
-        request.setTitle(fileName);
-        request.setDescription("Downloading classwork...");
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
 
-        DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-        if (downloadManager != null) {
-            downloadManager.enqueue(request);
-        } else {
-            Toast.makeText(this, "Download Manager not available", Toast.LENGTH_SHORT).show();
+        DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        if (manager != null) {
+            manager.enqueue(request);
+            Toast.makeText(this, "Download Started", Toast.LENGTH_SHORT).show();
         }
     }
 }
