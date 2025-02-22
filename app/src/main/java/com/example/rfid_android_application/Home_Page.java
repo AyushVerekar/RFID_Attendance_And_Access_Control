@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -12,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class Home_Page extends AppCompatActivity {
 
-    Button logoutButton, timetableButton, attendanceButton;
+    Button logoutButton, timetableButton, attendanceButton,classworkButton;
     SharedPreferences studentPrefs, teacherPrefs;
     TextView userName, userId;
 
@@ -78,6 +79,33 @@ public class Home_Page extends AppCompatActivity {
                 finish();
             }
         });
+
+         classworkButton = findViewById(R.id.HomeClassworkButton);
+        classworkButton.setOnClickListener(view -> {
+            Intent intent = new Intent(Home_Page.this, ActivityClasswork.class);
+            startActivity(intent);
+        });
+
+// Show Classwork button only if logged in
+        if (teacherPrefs.contains("teacher_name") || studentPrefs.contains("student_name")) {
+            classworkButton.setVisibility(View.VISIBLE);
+        } else {
+            classworkButton.setVisibility(View.GONE);
+        }
+
+         classworkButton = findViewById(R.id.HomeClassworkButton);
+        classworkButton.setOnClickListener(view -> {
+            Intent intent = new Intent(Home_Page.this, ActivityClasswork.class);
+            startActivity(intent);
+        });
+
+// Show Classwork button only if logged in
+        if (teacherPrefs.contains("teacher_name") || studentPrefs.contains("student_name")) {
+            classworkButton.setVisibility(View.VISIBLE);
+        } else {
+            classworkButton.setVisibility(View.GONE);
+        }
+
 
         // **Handle Logout Button Click**
         logoutButton.setOnClickListener(v -> showLogoutDialog());
