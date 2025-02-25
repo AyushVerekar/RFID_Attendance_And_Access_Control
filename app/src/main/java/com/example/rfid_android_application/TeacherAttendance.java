@@ -51,7 +51,7 @@ public class TeacherAttendance extends AppCompatActivity {
     private void fetchAttendance() {
         new Thread(() -> {
             try {
-                String urlString = "http://192.168.159.245/rfid/teacherAttendance.php?Tr_id=" + teacherId;
+                String urlString = "http://192.168.79.1/rfid/teacherAttendance.php?Tr_id=" + teacherId;
                 Log.d(TAG, "Requesting URL: " + urlString); // Debugging log
 
                 URL url = new URL(urlString);

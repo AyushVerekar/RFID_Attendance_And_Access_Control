@@ -13,127 +13,87 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class Home_Page extends AppCompatActivity {
 
-    Button logoutButton, timetableButton, attendanceButton,classworkButton;
-    SharedPreferences studentPrefs, teacherPrefs;
-    TextView userName, userId;
+    private Button logoutButton, timetableButton, attendanceButton, classworkButton;
+    private SharedPreferences studentPrefs, teacherPrefs;
+    private TextView userName, userId;
+    private boolean isTeacher, isStudent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
+        // Initialize UI elements
         logoutButton = findViewById(R.id.logoutButton);
         timetableButton = findViewById(R.id.HomeTimeTableButton);
         attendanceButton = findViewById(R.id.HomeAttendanceButton);
+        classworkButton = findViewById(R.id.HomeClassworkButton);
         userName = findViewById(R.id.UserName);
         userId = findViewById(R.id.UserId);
 
+        // Load SharedPreferences
         studentPrefs = getSharedPreferences("StudentPrefs", Context.MODE_PRIVATE);
         teacherPrefs = getSharedPreferences("TeacherPrefs", Context.MODE_PRIVATE);
 
-        // Display user name and ID
-        if (teacherPrefs.contains("teacher_name") && teacherPrefs.contains("teacher_id")) {
-            String name = teacherPrefs.getString("teacher_name", "Unknown Teacher").toUpperCase();
-            String id = teacherPrefs.getString("teacher_id", "Unknown ID");
-            userName.setText("NAME: " + name);
-            userId.setText("ID: " + id);
-        } else if (studentPrefs.contains("student_name") && studentPrefs.contains("student_CUIN")) {
-            String name = studentPrefs.getString("student_name", "Unknown Student").toUpperCase();
-            String cuin = studentPrefs.getString("student_CUIN", "Unknown CUIN");
-            userName.setText("NAME: " + name);
-            userId.setText("CUIN: " + cuin);
-        } else {
+        // Check if logged in as Teacher or Student
+        isTeacher = teacherPrefs.contains("teacher_name") && teacherPrefs.contains("teacher_id");
+        isStudent = studentPrefs.contains("student_name") && studentPrefs.contains("student_CUIN");
+
+        // Set User Details
+        String name = isTeacher ? teacherPrefs.getString("teacher_name", "Unknown Teacher")
+                : studentPrefs.getString("student_name", "Unknown Student");
+        String id = isTeacher ? teacherPrefs.getString("teacher_id", "Unknown ID")
+                : studentPrefs.getString("student_CUIN", "Unknown CUIN");
+
+        userName.setText("NAME: " + name.toUpperCase());
+        userId.setText(isTeacher ? "ID: " + id : "CUIN: " + id);
+
+        // If no valid login, show "Not Logged In"
+        if (!isTeacher && !isStudent) {
             userName.setText("NAME: NOT LOGGED IN");
             userId.setText("ID: NOT LOGGED IN");
         }
 
         // **Handle Timetable Button Click**
-        timetableButton.setOnClickListener(view -> {
-            if (teacherPrefs.contains("teacher_name") && teacherPrefs.contains("teacher_id")) {
-                // Open Teachers Timetable
-                Intent intent = new Intent(Home_Page.this, TeachersTimetable.class);
-                startActivity(intent);
-            } else if (studentPrefs.contains("student_name") && studentPrefs.contains("student_CUIN")) {
-                // Open Students Timetable
-                Intent intent = new Intent(Home_Page.this, Students_Timetable.class);
-                startActivity(intent);
-            } else {
-                // If no valid login, redirect to login page
-                Intent intent = new Intent(Home_Page.this, MainLoginPage.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+        timetableButton.setOnClickListener(view -> openActivity(
+                isTeacher ? TeachersTimetable.class : isStudent ? Students_Timetable.class : MainLoginPage.class));
 
         // **Handle Attendance Button Click**
-        attendanceButton.setOnClickListener(view -> {
-            if (teacherPrefs.contains("teacher_name") && teacherPrefs.contains("teacher_id")) {
-                Intent intent = new Intent(Home_Page.this, TeacherAttendance.class);
-                startActivity(intent);
-            } else if (studentPrefs.contains("student_name") && studentPrefs.contains("student_CUIN")) {
-                Intent intent = new Intent(Home_Page.this, StudentAttendence.class);
-                startActivity(intent);
-            } else {
-                Intent intent = new Intent(Home_Page.this, MainLoginPage.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+        attendanceButton.setOnClickListener(view -> openActivity(
+                isTeacher ? TeacherAttendance.class : isStudent ? StudentAttendence.class : MainLoginPage.class));
 
-         classworkButton = findViewById(R.id.HomeClassworkButton);
-        classworkButton.setOnClickListener(view -> {
-            Intent intent = new Intent(Home_Page.this, ActivityClasswork.class);
-            startActivity(intent);
-        });
+        // **Handle Classwork Button Click**
+        classworkButton.setOnClickListener(view -> openActivity(ActivityClasswork.class));
 
-// Show Classwork button only if logged in
-        if (teacherPrefs.contains("teacher_name") || studentPrefs.contains("student_name")) {
-            classworkButton.setVisibility(View.VISIBLE);
-        } else {
-            classworkButton.setVisibility(View.GONE);
-        }
-
-         classworkButton = findViewById(R.id.HomeClassworkButton);
-        classworkButton.setOnClickListener(view -> {
-            Intent intent = new Intent(Home_Page.this, ActivityClasswork.class);
-            startActivity(intent);
-        });
-
-// Show Classwork button only if logged in
-        if (teacherPrefs.contains("teacher_name") || studentPrefs.contains("student_name")) {
-            classworkButton.setVisibility(View.VISIBLE);
-        } else {
-            classworkButton.setVisibility(View.GONE);
-        }
-
+        // **Show Classwork button only if logged in**
+        classworkButton.setVisibility((isTeacher || isStudent) ? View.VISIBLE : View.GONE);
 
         // **Handle Logout Button Click**
         logoutButton.setOnClickListener(v -> showLogoutDialog());
     }
 
-    private void showLogoutDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Logout");
-        builder.setMessage("Are you sure you want to log out?");
-
-        builder.setPositiveButton("Yes", (dialog, which) -> logoutUser());
-        builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
+    // **Reusable Method to Open Activities**
+    private void openActivity(Class<?> activity) {
+        startActivity(new Intent(Home_Page.this, activity));
     }
 
+    // **Show Logout Confirmation Dialog**
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to log out?")
+                .setPositiveButton("Yes", (dialog, which) -> logoutUser())
+                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
+    }
+
+    // **Perform Logout Operation**
     private void logoutUser() {
-        SharedPreferences.Editor studentEditor = studentPrefs.edit();
-        studentEditor.clear();
-        studentEditor.apply();
+        studentPrefs.edit().clear().apply();
+        teacherPrefs.edit().clear().apply();
 
-        SharedPreferences.Editor teacherEditor = teacherPrefs.edit();
-        teacherEditor.clear();
-        teacherEditor.apply();
-
-        Intent intent = new Intent(Home_Page.this, MainLoginPage.class);
-        startActivity(intent);
+        openActivity(MainLoginPage.class);
         finish();
     }
 }
