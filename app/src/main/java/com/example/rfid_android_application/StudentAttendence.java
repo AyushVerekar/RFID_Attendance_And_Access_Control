@@ -57,7 +57,7 @@ public class StudentAttendence extends AppCompatActivity {
     private void fetchAttendance() {
         new Thread(() -> {
             try {
-                URL url = new URL("http://192.168.159.245/rfid/studentAttendance.php?CUIN=" + CUIN);
+                URL url = new URL("http://192.168.79.1/rfid/studentAttendance.php?CUIN=" + CUIN);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.setConnectTimeout(5000);

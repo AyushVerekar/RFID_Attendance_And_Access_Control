@@ -36,7 +36,7 @@ public class ActivityClasswork extends AppCompatActivity {
     private LinearLayout fileListLayout;
     private ProgressBar progressBar;
     private SharedPreferences teacherPrefs;
-    private static final String BASE_URL = "http://192.168.159.245/rfid/";
+    private static final String BASE_URL = "http://192.168.79.1/rfid/";
     private static final String UPLOAD_URL = BASE_URL + "upload.php";
     private static final String FETCH_URL = BASE_URL + "fetch_files.php";
     private static final String DELETE_URL = BASE_URL + "delete_file.php";
