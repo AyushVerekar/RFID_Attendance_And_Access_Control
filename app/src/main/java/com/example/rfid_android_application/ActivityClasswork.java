@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -35,8 +36,9 @@ public class ActivityClasswork extends AppCompatActivity {
     private Button uploadButton;
     private LinearLayout fileListLayout;
     private ProgressBar progressBar;
-    private SharedPreferences teacherPrefs;
-    private static final String BASE_URL = "http://192.168.79.1/rfid/";
+    private SharedPreferences teacherPrefs,studentPrefs;
+
+    private static final String BASE_URL = "http://192.168.217.1/rfid/";
     private static final String UPLOAD_URL = BASE_URL + "upload.php";
     private static final String FETCH_URL = BASE_URL + "fetch_files.php";
     private static final String DELETE_URL = BASE_URL + "delete_file.php";
@@ -50,8 +52,12 @@ public class ActivityClasswork extends AppCompatActivity {
         fileListLayout = findViewById(R.id.fileListLayout);
         progressBar = findViewById(R.id.progressBar);
         teacherPrefs = getSharedPreferences("TeacherPrefs", MODE_PRIVATE);
+        studentPrefs = getSharedPreferences("StudentPrefs", MODE_PRIVATE);
 
-        if (teacherPrefs.contains("teacher_name")) {
+
+
+
+        if (teacherPrefs.contains("teacher_id")) { // Updated to use teacher_id
             uploadButton.setVisibility(View.VISIBLE);
             uploadButton.setOnClickListener(view -> openFileChooser());
         } else {
@@ -111,13 +117,13 @@ public class ActivityClasswork extends AppCompatActivity {
             inputStream.close();
             outputStream.close();
 
-            String teacherName = teacherPrefs.getString("teacher_name", "Unknown");
+            String teacherId = teacherPrefs.getString("teacher_id", "0"); // Fetch teacher_id
 
             OkHttpClient client = new OkHttpClient();
             RequestBody requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("file", fileName, RequestBody.create(tempFile, MediaType.parse("application/pdf")))
-                    .addFormDataPart("teacher_name", teacherName)
+                    .addFormDataPart("teacher_id", teacherId) // Updated field
                     .build();
 
             Request request = new Request.Builder().url(UPLOAD_URL).post(requestBody).build();
@@ -149,8 +155,21 @@ public class ActivityClasswork extends AppCompatActivity {
 
     private void fetchUploadedFiles() {
         fileListLayout.removeAllViews();
+
+        String urlWithParams = FETCH_URL;  // Default URL
+
+        if (teacherPrefs.contains("teacher_id")) {  // If logged in as teacher
+            String teacherId = teacherPrefs.getString("teacher_id", "0");
+            Log.d("Classwork", "Teacher logged in, fetching files uploaded by teacher ID: " + teacherId);
+            urlWithParams += "?teacher_id=" + teacherId;
+        } else if (studentPrefs.contains("student_CUIN")) {  // If logged in as student
+            String cuin = studentPrefs.getString("student_CUIN", "0");
+            Log.d("Classwork", "Student logged in, fetching files for CUIN: " + cuin);
+            urlWithParams += "?cuin=" + cuin;
+        }
+
         OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url(FETCH_URL).get().build();
+        Request request = new Request.Builder().url(urlWithParams).get().build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -163,28 +182,42 @@ public class ActivityClasswork extends AppCompatActivity {
                 String responseData = response.body().string();
                 runOnUiThread(() -> {
                     try {
-                        JSONArray jsonArray = new JSONArray(responseData);
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject fileObject = jsonArray.getJSONObject(i);
-                            String fileName = fileObject.getString("name");
-                            String teacherName = fileObject.getString("teacher");
+                        JSONObject jsonResponse = new JSONObject(responseData);
+                        boolean success = jsonResponse.getBoolean("success");
 
-                            View fileView = getLayoutInflater().inflate(R.layout.file_item, fileListLayout, false);
-                            TextView fileNameTextView = fileView.findViewById(R.id.fileName);
-                            Button downloadButton = fileView.findViewById(R.id.downloadButton);
-                            Button deleteButton = fileView.findViewById(R.id.deleteButton);
+                        if (success) {
+                            JSONArray jsonArray = jsonResponse.getJSONArray("files");
 
-                            fileNameTextView.setText(fileName + " (Uploaded by: " + teacherName + ")");
-                            downloadButton.setOnClickListener(v -> downloadFile(fileName));
-
-                            if (teacherPrefs.contains("teacher_name")) {
-                                deleteButton.setVisibility(View.VISIBLE);
-                                deleteButton.setOnClickListener(v -> confirmDelete(fileName));
-                            } else {
-                                deleteButton.setVisibility(View.GONE);
+                            if (jsonArray.length() == 0) {
+                                Toast.makeText(ActivityClasswork.this, "No files available", Toast.LENGTH_SHORT).show();
+                                return;
                             }
 
-                            fileListLayout.addView(fileView);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject fileObject = jsonArray.getJSONObject(i);
+                                String fileName = fileObject.getString("name");
+                                String teacherName = fileObject.getString("teacher_name");
+
+                                View fileView = getLayoutInflater().inflate(R.layout.file_item, fileListLayout, false);
+                                TextView fileNameTextView = fileView.findViewById(R.id.fileName);
+                                Button downloadButton = fileView.findViewById(R.id.downloadButton);
+                                Button deleteButton = fileView.findViewById(R.id.deleteButton);
+
+                                fileNameTextView.setText(fileName + " (Uploaded by: " + teacherName + ")");
+
+                                downloadButton.setOnClickListener(v -> downloadFile(fileName));
+
+                                if (teacherPrefs.contains("teacher_id")) {  // Show delete button for teachers
+                                    deleteButton.setVisibility(View.VISIBLE);
+                                    deleteButton.setOnClickListener(v -> confirmDelete(fileName));
+                                } else {
+                                    deleteButton.setVisibility(View.GONE);
+                                }
+
+                                fileListLayout.addView(fileView);
+                            }
+                        } else {
+                            Toast.makeText(ActivityClasswork.this, "No files found", Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -194,6 +227,11 @@ public class ActivityClasswork extends AppCompatActivity {
         });
     }
 
+
+
+
+
+
     private void confirmDelete(String fileName) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete File")
@@ -202,14 +240,17 @@ public class ActivityClasswork extends AppCompatActivity {
                 .setNegativeButton("No", null)
                 .show();
     }
+
     private void deleteFileFromServer(String fileName) {
         OkHttpClient client = new OkHttpClient();
+        String teacherId = teacherPrefs.getString("teacher_id", "0"); // Fetch teacher_id
         RequestBody requestBody = new FormBody.Builder()
-                .add("file_name", fileName.trim()) // Trim to remove spaces
+                .add("file_name", fileName.trim())
+                .add("teacher_id", teacherId) // Send teacher_id
                 .build();
 
         Request request = new Request.Builder()
-                .url("http://192.168.159.245/rfid/delete_file.php") // Make sure this URL is correct
+                .url(DELETE_URL)
                 .post(requestBody)
                 .build();
 
@@ -230,7 +271,7 @@ public class ActivityClasswork extends AppCompatActivity {
                     runOnUiThread(() -> {
                         Toast.makeText(ActivityClasswork.this, message, Toast.LENGTH_SHORT).show();
                         if (success) {
-                            fetchUploadedFiles(); // Refresh file list after deletion
+                            fetchUploadedFiles();
                         }
                     });
                 } catch (Exception e) {
@@ -239,8 +280,6 @@ public class ActivityClasswork extends AppCompatActivity {
             }
         });
     }
-
-
 
     private void downloadFile(String fileName) {
         String fileUrl = BASE_URL + "uploads/" + fileName;
