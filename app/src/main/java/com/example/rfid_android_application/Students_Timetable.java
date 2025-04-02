@@ -12,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -22,9 +21,6 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class Students_Timetable extends AppCompatActivity {
 
@@ -37,7 +33,7 @@ public class Students_Timetable extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_students_timetable);
 
-        tableLayout = findViewById(R.id.StudentTimetable);
+        tableLayout = findViewById(R.id.TeacherTimetable);
         sharedPreferences = getSharedPreferences("StudentPrefs", Context.MODE_PRIVATE);
 
         fetchTimetable();
@@ -51,7 +47,7 @@ public class Students_Timetable extends AppCompatActivity {
             return;
         }
 
-        String url = "http://192.168.79.1/rfid/studentTimetable.php?CUIN=" + studentCUIN;
+        String url = "http://192.168.217.1/rfid/studentTimetable.php?CUIN=" + studentCUIN;
         RequestQueue queue = Volley.newRequestQueue(this);
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -64,61 +60,30 @@ public class Students_Timetable extends AppCompatActivity {
                     }
 
                     try {
-                        tableLayout.removeAllViews();
-
-                        String[] timeSlots = {"8:45", "9:45", "10:45", "11:15", "12:15"};
-                        Map<String, String[]> timetableData = new LinkedHashMap<>();
+                        // Clear previous rows, keep header row
+                        tableLayout.removeViews(1, Math.max(0, tableLayout.getChildCount() - 1));
 
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject row = response.getJSONObject(i);
-                            String day = row.getString("day");
-                            String slot = row.getString("slot");
-                            String subject = row.optString("subject_code", "-");
+                            String day = row.optString("day", "Unknown");
 
-                            if (!timetableData.containsKey(day)) {
-                                timetableData.put(day, new String[timeSlots.length]);
+                            // Initialize subjects array with default values
+                            String[] subjects = new String[]{"-", "-", "Break", "-", "-"};
+
+                            for (int j = 1; j <= 5; j++) {
+                                if (j == 3) continue; // Skip break slot
+                                String key = "slot_" + j;
+                                int index = j > 3 ? j - 1 : j - 1; // Adjust index for break
+                                subjects[index] = row.optString(key, "-");
                             }
 
-                            for (int j = 0; j < timeSlots.length; j++) {
-                                if (timeSlots[j].equals(slot)) {
-                                    timetableData.get(day)[j] = subject;
-                                }
-                            }
-                        }
-
-                        // 🔹 Create Table Header Row (Day + Time Slots)
-                        TableRow headerRow = new TableRow(Students_Timetable.this);
-                        headerRow.setBackgroundColor(ContextCompat.getColor(this, R.color.mainBlueColor));
-
-                        // "Day" column header
-                        TextView dayHeader = createHeaderTextView("Day");
-                        headerRow.addView(dayHeader);
-
-                        // Time slots column headers
-                        for (String slot : timeSlots) {
-                            TextView slotHeader = createHeaderTextView(slot);
-                            headerRow.addView(slotHeader);
-                        }
-
-                        tableLayout.addView(headerRow);
-
-                        // 🔹 Add Data Rows for each Day
-                        for (Map.Entry<String, String[]> entry : timetableData.entrySet()) {
                             TableRow tableRow = new TableRow(Students_Timetable.this);
 
-                            // Add Day Name
-                            TextView dayView = createDayTextView(entry.getKey());
+                            TextView dayView = createDayTextView(day);
                             tableRow.addView(dayView);
 
-                            // Add Subject Codes
-                            String[] subjects = entry.getValue();
-                            for (int i = 0; i < timeSlots.length; i++) {
-                                TextView subjectView;
-                                if (timeSlots[i].equals("10:45")) {
-                                    subjectView = createBreakTextView();
-                                } else {
-                                    subjectView = createSubjectTextView(subjects[i] == null ? "-" : subjects[i]);
-                                }
+                            for (String subject : subjects) {
+                                TextView subjectView = createSubjectTextView(subject);
                                 tableRow.addView(subjectView);
                             }
 
@@ -126,7 +91,8 @@ public class Students_Timetable extends AppCompatActivity {
                         }
 
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "JSON Parsing Error: " + e.getMessage());
+                        Toast.makeText(Students_Timetable.this, "Error parsing data.", Toast.LENGTH_SHORT).show();
                     }
                 }, error -> {
             Log.e(TAG, "API Error: " + error.toString());
@@ -136,19 +102,6 @@ public class Students_Timetable extends AppCompatActivity {
         queue.add(request);
     }
 
-    // 🔹 Create Header TextView
-    private TextView createHeaderTextView(String text) {
-        TextView textView = new TextView(this);
-        textView.setText(text);
-        textView.setPadding(12, 12, 12, 12);
-        textView.setTextSize(18);
-        textView.setTextColor(Color.WHITE);
-        textView.setBackgroundColor(ContextCompat.getColor(this, R.color.mainBlueColor));
-        textView.setGravity(Gravity.CENTER);
-        return textView;
-    }
-
-    // 🔹 Create Day TextView
     private TextView createDayTextView(String text) {
         TextView textView = new TextView(this);
         textView.setText(text);
@@ -159,24 +112,12 @@ public class Students_Timetable extends AppCompatActivity {
         return textView;
     }
 
-    // 🔹 Create Subject Code TextView
     private TextView createSubjectTextView(String subject) {
         TextView textView = new TextView(this);
-        textView.setText(subject != null ? subject : "-");
+        textView.setText(subject);
         textView.setPadding(12, 12, 12, 12);
         textView.setTextSize(18);
-        textView.setTextColor(Color.BLACK);
-        textView.setGravity(Gravity.CENTER);
-        return textView;
-    }
-
-    // 🔹 Create Break TextView
-    private TextView createBreakTextView() {
-        TextView textView = new TextView(this);
-        textView.setText("Break");
-        textView.setPadding(12, 12, 12, 12);
-        textView.setTextSize(18);
-        textView.setTextColor(Color.RED);
+        textView.setTextColor(subject.equals("Break") ? Color.RED : Color.BLACK);
         textView.setGravity(Gravity.CENTER);
         return textView;
     }
