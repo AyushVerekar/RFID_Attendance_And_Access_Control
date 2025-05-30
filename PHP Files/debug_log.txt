@@ -1,0 +1,34 @@
+Received: Tr_name=shubha kamat, Tr_id=202501
+Query: SELECT * FROM teacher WHERE Tr_name = 'shubha kamat' AND Tr_id = '202501'
+Received: student_name=angeeth Pavithran, CUIN=2203752
+Received: student_name=angeeth pavithran, CUIN=2203752
+Received: student_name=Sprilea Dsouza, CUIN=2203672
+Received: Tr_name=shubha kamat, Tr_id=202501
+Query: SELECT * FROM teacher WHERE Tr_name = 'shubha kamat' AND Tr_id = '202501'
+Received: student_name=angeeth pavithran, CUIN=2203752
+Received: student_name=vedang sawant, CUIN=2203669
+Received: student_name=angeeth pavithran, CUIN=220375
+Received: student_name=angeeth pavithran, CUIN=220375
+Received: student_name=angeeth pavithran, CUIN=2203752
+Received: Tr_name=shubha kamat, Tr_id=202501
+Query: SELECT * FROM teacher WHERE Tr_name = 'shubha kamat' AND Tr_id = '202501'
+Received: student_name=angeeth pavithran, CUIN=2203752
+Received: Tr_name=shubha kamat, Tr_id=202501
+Query: SELECT * FROM teacher WHERE Tr_name = 'shubha kamat' AND Tr_id = '202501'
+Received: student_name=angeeth pavithran, CUIN=2203752
+Received: Tr_name=shubha kamat, Tr_id=202501
+Query: SELECT * FROM teacher WHERE Tr_name = 'shubha kamat' AND Tr_id = '202501'
+Received: student_name=sakshi vijapure, CUIN=2203627
+Received: Tr_name=nilesh natekar, Tr_id=202502
+Query: SELECT * FROM teacher WHERE Tr_name = 'nilesh natekar' AND Tr_id = '202502'
+Received: student_name=sprilea dsouza, CUIN=2203672
+Received: student_name=Sakshi vijapure, CUIN=2203627
+Received: student_name=Aadarsh Sawant, CUIN=2203662
+Received: Tr_name=nilesh natekar, Tr_id=202502
+Query: SELECT * FROM teacher WHERE Tr_name = 'nilesh natekar' AND Tr_id = '202502'
+Received: student_name=Aadarsh sawant, CUIN=2203662
+Received: student_name=angeeth Pavithran, CUIN=2203752
+Received: student_name=aadarsh sawant, CUIN=2203662
+Received: student_name=aadarsh sawant, CUIN=2203662
+Received: Tr_name=nilesh natekar, Tr_id=202502
+Query: SELECT * FROM teacher WHERE Tr_name = 'nilesh natekar' AND Tr_id = '202502'

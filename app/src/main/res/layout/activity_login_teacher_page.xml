@@ -5,50 +5,79 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginTeacherPage">
-    <EditText
-        android:id="@+id/LoginTeacherNameText"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="230dp"
-        android:ems="10"
-        android:hint="Name"
-        android:inputType="text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    tools:context=".LoginTeacherPage"
+    >
 
-    <EditText
-        android:id="@+id/LoginTeacherIDText"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="290dp"
-        android:ems="10"
-        android:hint="ID"
-        android:inputType="text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/LoginTeacherDepartmentText"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="350dp"
-        android:ems="10"
-        android:hint="Department"
-        android:inputType="text"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/loginCardViewTeachers"
+        android:layout_width="265dp"
+        android:layout_height="350dp"
+        android:layout_margin="32dp"
+        android:layout_marginTop="52dp"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.616"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="MissingConstraints">
 
-    <Button
-        android:id="@+id/LoginTeacherLoginSubmitButton"
-        android:layout_width="144dp"
-        android:layout_height="49dp"
-        android:layout_marginStart="132dp"
-        android:layout_marginTop="430dp"
-        android:text="Login"
+        <LinearLayout
+            android:layout_width="265dp"
+            android:layout_height="match_parent"
+            android:foregroundGravity=""
+            android:orientation="vertical"
+            android:padding="24dp">
+
+
+            <EditText
+                android:id="@+id/LoginTeacherNameText"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="50dp"
+                android:backgroundTint="@color/mainBlueColor"
+                android:hint="Name"
+                android:inputType="text"
+                android:textColor="@color/mainBlueColor"
+                android:textColorHint="@color/mainBlueColor" />
+
+            <EditText
+                android:id="@+id/LoginTeacherIDText"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/mainBlueColor"
+                android:hint="ID"
+                android:inputType="text"
+                android:textColor="@color/mainBlueColor"
+                android:textColorHint="@color/mainBlueColor" />
+
+            <Button
+                android:id="@+id/LoginTeacherLoginSubmitButton"
+                android:layout_width="match_parent"
+                android:layout_height="49dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/mainbuttonborder"
+                android:text="Login"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="177dp"
+        android:layout_height="157dp"
+        android:layout_marginTop="72dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.538"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/studentlogin" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
